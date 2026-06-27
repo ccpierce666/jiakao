@@ -108,11 +108,6 @@ fun ProfileScreen(contentPadding: PaddingValues) {
             )
         }
         item {
-            ToolsCard(
-                modifier = Modifier.padding(start = 12.dp, top = 12.dp, end = 12.dp)
-            )
-        }
-        item {
             MoreQuestionBanksCard(
                 modifier = Modifier.padding(start = 12.dp, top = 12.dp, end = 12.dp)
             )
