@@ -585,13 +585,13 @@ private fun PracticeDashboard(
     onFeaturedQuestionsClick: () -> Unit
 ) {
     val left = listOf(
-        PracticeEntry("解题技巧", Icons.Default.Lightbulb, Color(0xFF22C69A)),
-        PracticeEntry("真实考场\n模拟", Icons.Default.Verified, Color(0xFF1BC494))
+        PracticeEntry("解题技巧", Icons.Default.Lightbulb, Color(0xFF19C793)),
+        PracticeEntry("真实考场\n模拟", Icons.Default.Verified, Color(0xFF24A8F2))
     )
     val right = listOf(
-        PracticeEntry("速成题库", Icons.Default.Star, Color(0xFF7775EC)),
-        PracticeEntry("分类训练", Icons.Default.Refresh, Color(0xFF47AEE3)),
-        PracticeEntry("错题\n收藏", Icons.Default.Close, Color(0xFF49B4E8))
+        PracticeEntry("速成题库", Icons.Default.Star, Color(0xFF8A7BFF)),
+        PracticeEntry("分类训练", Icons.Default.CollectionsBookmark, Color(0xFF36A8E8)),
+        PracticeEntry("错题\n收藏", Icons.Default.Close, Color(0xFFFF7A45))
     )
 
     Row(
@@ -702,30 +702,35 @@ private fun PracticeEntryItem(
 ) {
     Column(
         modifier = Modifier
-            .width(78.dp)
+            .width(82.dp)
             .clickable(enabled = onClick != null) { onClick?.invoke() },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
             modifier = Modifier
-                .size(46.dp)
-                .clip(RoundedCornerShape(12.dp))
+                .size(52.dp)
+                .clip(RoundedCornerShape(17.dp))
                 .background(
                     Brush.linearGradient(
-                        listOf(entry.color.copy(alpha = 0.15f), entry.color.copy(alpha = 0.06f))
+                        listOf(
+                            entry.color.copy(alpha = 0.22f),
+                            entry.color.copy(alpha = 0.08f),
+                            Color.White.copy(alpha = 0.92f)
+                        )
                     )
                 )
-                .border(1.dp, entry.color.copy(alpha = 0.32f), RoundedCornerShape(12.dp)),
+                .border(1.dp, entry.color.copy(alpha = 0.24f), RoundedCornerShape(17.dp)),
             contentAlignment = Alignment.Center
         ) {
-            Icon(entry.icon, null, tint = entry.color, modifier = Modifier.size(25.dp))
+            Icon(entry.icon, null, tint = entry.color, modifier = Modifier.size(29.dp))
         }
-        Spacer(Modifier.height(6.dp))
+        Spacer(Modifier.height(7.dp))
         Text(
             entry.label,
-            color = Color(0xFF45504F),
+            color = Color(0xFF344341),
             fontSize = 12.sp,
             lineHeight = 15.sp,
+            fontWeight = FontWeight.Medium,
             textAlign = TextAlign.Center,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
