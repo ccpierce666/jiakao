@@ -620,25 +620,25 @@ private fun PracticeDashboard(
         Column(
             modifier = Modifier
                 .weight(1.15f)
-                .padding(horizontal = 5.dp)
-                .offset(x = 5.dp),
+                .padding(horizontal = 7.dp)
+                .offset(x = 6.dp, y = (-8).dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             MainPracticeCard(
                 title = "顺序练习",
-                subtitle = "已做 ${practiceStatistics.answered}/${practiceStatistics.total}",
+                subtitle = "${practiceStatistics.answered}/${practiceStatistics.total}",
                 icon = Icons.Default.MenuBook,
-                colors = listOf(Color(0xFF26D29D), Color(0xFFE9FFF7)),
+                colors = listOf(Color(0xFF8DF1CE), Color(0xFFE9FFF7)),
                 actionText = "",
                 onClick = onSequencePracticeClick
             )
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(20.dp))
             MainPracticeCard(
-                title = "模拟考试",
-                subtitle = "开始模考",
+                title = "模拟考",
+                subtitle = "开始->",
                 icon = Icons.Default.FactCheck,
-                colors = listOf(Color(0xFF36B8F3), Color(0xFFEAF8FF)),
-                titleColor = Color(0xFF0B83A7),
+                colors = listOf(Color(0xFF9FE0FF), Color(0xFFEAF8FF)),
+                titleColor = Color(0xFF087B9E),
                 actionText = "",
                 onClick = onMockExamClick
             )
@@ -744,67 +744,38 @@ private fun MainPracticeCard(
     actionText: String = "立即进入",
     onClick: () -> Unit = {}
 ) {
-    Row(
+    Column(
         modifier = modifier
-            .fillMaxWidth()
-            .height(92.dp)
-            .clip(RoundedCornerShape(26.dp))
-            .background(
-                Brush.linearGradient(
-                    listOf(Color.White, colors.last())
-                )
-            )
-            .border(1.dp, colors.first().copy(alpha = 0.20f), RoundedCornerShape(26.dp))
+            .size(106.dp)
+            .clip(CircleShape)
+            .background(Brush.radialGradient(colors))
             .clickable(onClick = onClick)
-            .padding(horizontal = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(top = 9.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
             modifier = Modifier
-                .size(46.dp)
-                .clip(RoundedCornerShape(18.dp))
-                .background(
-                    Brush.linearGradient(
-                        listOf(colors.first(), colors.first().copy(alpha = 0.62f))
-                    )
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(icon, null, tint = Color.White, modifier = Modifier.size(27.dp))
-        }
-        Spacer(Modifier.width(9.dp))
-        Column(
-            modifier = Modifier.weight(1f)
-        ) {
-            Text(
-                title,
-                color = titleColor,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            Spacer(Modifier.height(6.dp))
-            Text(
-                subtitle,
-                color = Color(0xFF6B7B7B),
-                fontSize = 11.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-        Box(
-            modifier = Modifier
-                .size(24.dp)
+                .size(34.dp)
                 .clip(CircleShape)
-                .background(colors.first().copy(alpha = 0.12f)),
+                .background(Color.White.copy(alpha = 0.45f)),
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                Icons.Default.ChevronRight,
-                contentDescription = null,
-                tint = colors.first(),
-                modifier = Modifier.size(17.dp)
+            Icon(icon, null, tint = titleColor, modifier = Modifier.size(24.dp))
+        }
+        Spacer(Modifier.height(3.dp))
+        Text(title, color = titleColor, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+        Text(subtitle, color = titleColor.copy(alpha = 0.86f), fontSize = 9.sp, maxLines = 1)
+        if (actionText.isNotBlank()) {
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = actionText,
+                color = Color.White,
+                fontSize = 9.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .clip(RoundedCornerShape(50))
+                    .background(titleColor.copy(alpha = 0.68f))
+                    .padding(horizontal = 8.dp, vertical = 2.dp)
             )
         }
     }
