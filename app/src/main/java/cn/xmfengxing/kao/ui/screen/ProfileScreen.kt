@@ -449,33 +449,89 @@ private fun LearningProgressCard(modifier: Modifier = Modifier) {
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
             .background(Color.White)
-            .border(1.dp, Color(0xFFFFE8C8), RoundedCornerShape(12.dp))
-            .padding(14.dp)
+            .padding(horizontal = 16.dp, vertical = 16.dp)
     ) {
-        Text("学习进度", color = SecondaryText, fontSize = 13.sp)
-        Spacer(Modifier.height(8.dp))
+        Text(
+            text = "学车阶段",
+            color = PrimaryText,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(Modifier.height(14.dp))
         Row(
             modifier = Modifier
+                .fillMaxWidth()
                 .clip(RoundedCornerShape(8.dp))
-                .background(Color(0xFFFFF7E8))
-                .padding(horizontal = 12.dp, vertical = 6.dp),
+                .background(Color(0xFFF0F4F7))
+                .padding(2.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("科目一", color = PrimaryText, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
-            Icon(
-                imageVector = Icons.Outlined.KeyboardArrowDown,
-                contentDescription = null,
-                tint = SecondaryText,
-                modifier = Modifier.size(16.dp)
+            LearningStageTab("科一", selected = true, modifier = Modifier.weight(1f))
+            LearningStageTab("科二", selected = false, modifier = Modifier.weight(1f))
+            LearningStageTab("科三", selected = false, modifier = Modifier.weight(1f))
+            LearningStageTab("科四", selected = false, modifier = Modifier.weight(1f))
+            LearningStageTab("满分学习", selected = false, modifier = Modifier.weight(1.25f))
+        }
+        Spacer(Modifier.height(20.dp))
+        Row(modifier = Modifier.fillMaxWidth()) {
+            ProgressStat("练习进度", "3/1841", Modifier.weight(1f))
+            ProgressStat("模考平均分", "0", Modifier.weight(1f))
+            ProgressStat("精选500题", "0/500", Modifier.weight(1f))
+        }
+        Spacer(Modifier.height(20.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            LearningStageAction(
+                title = "直播课堂",
+                subtitle = "免费拿技巧",
+                icon = Icons.AutoMirrored.Outlined.MenuBook,
+                iconTint = Color(0xFFFF7A22),
+                iconBackground = Color(0xFFFFE9DF),
+                modifier = Modifier.weight(1f)
+            )
+            LearningStageAction(
+                title = "精选500题",
+                subtitle = "揭秘高频考点",
+                icon = Icons.Outlined.Lightbulb,
+                iconTint = Color(0xFF9D5BF6),
+                iconBackground = Color(0xFFEFE3FF),
+                modifier = Modifier.weight(1f)
+            )
+            LearningStageAction(
+                title = "0元领大礼包",
+                subtitle = "订科1考试",
+                icon = Icons.Outlined.EmojiEvents,
+                iconTint = Color(0xFFECA719),
+                iconBackground = Color(0xFFFFF1CF),
+                modifier = Modifier.weight(1f)
             )
         }
-        Spacer(Modifier.height(16.dp))
-        Row(modifier = Modifier.fillMaxWidth()) {
-            ProgressStat("练习", "100/1555", Modifier.weight(1f))
-            ProgressStat("模拟考试", "1", Modifier.weight(1f))
-            ProgressStat("模拟真实考场", "1", Modifier.weight(1f))
-            ProgressStat("速成题库", "1/500", Modifier.weight(1f))
-        }
+    }
+}
+
+@Composable
+private fun LearningStageTab(
+    text: String,
+    selected: Boolean,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .height(48.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .background(if (selected) BrandBlue else Color.Transparent),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = text,
+            color = if (selected) Color.White else Color(0xFF2F3B40),
+            fontSize = 15.sp,
+            fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }
 
@@ -486,9 +542,61 @@ private fun ProgressStat(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(label, color = SecondaryText, fontSize = 11.sp, maxLines = 1)
-        Spacer(Modifier.height(4.dp))
-        Text(value, color = PrimaryText, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+        Text(label, color = SecondaryText, fontSize = 14.sp, maxLines = 1)
+        Spacer(Modifier.height(8.dp))
+        Text(value, color = Color(0xFF15191C), fontSize = 26.sp, fontWeight = FontWeight.Bold)
+    }
+}
+
+@Composable
+private fun LearningStageAction(
+    title: String,
+    subtitle: String,
+    icon: ImageVector,
+    iconTint: Color,
+    iconBackground: Color,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .height(132.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .background(Color(0xFFF5F9FC))
+            .padding(horizontal = 8.dp, vertical = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Box(
+            modifier = Modifier
+                .size(58.dp)
+                .clip(RoundedCornerShape(18.dp))
+                .background(iconBackground),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = iconTint,
+                modifier = Modifier.size(30.dp)
+            )
+        }
+        Spacer(Modifier.height(10.dp))
+        Text(
+            text = title,
+            color = PrimaryText,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.SemiBold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+        Spacer(Modifier.height(6.dp))
+        Text(
+            text = subtitle,
+            color = SecondaryText,
+            fontSize = 12.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }
 
