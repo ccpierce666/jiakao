@@ -632,7 +632,7 @@ private fun PracticeDashboard(
                 actionText = "",
                 onClick = onSequencePracticeClick
             )
-            Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.height(14.dp))
             MainPracticeCard(
                 title = "模拟考",
                 subtitle = "开始->",
@@ -746,25 +746,25 @@ private fun MainPracticeCard(
 ) {
     Column(
         modifier = modifier
-            .size(106.dp)
+            .size(116.dp)
             .clip(CircleShape)
             .background(Brush.radialGradient(colors))
             .clickable(onClick = onClick)
-            .padding(top = 9.dp),
+            .padding(top = 11.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
             modifier = Modifier
-                .size(34.dp)
+                .size(42.dp)
                 .clip(CircleShape)
                 .background(Color.White.copy(alpha = 0.45f)),
             contentAlignment = Alignment.Center
         ) {
-            Icon(icon, null, tint = titleColor, modifier = Modifier.size(24.dp))
+            Icon(icon, null, tint = titleColor, modifier = Modifier.size(29.dp))
         }
-        Spacer(Modifier.height(3.dp))
-        Text(title, color = titleColor, fontSize = 15.sp, fontWeight = FontWeight.Bold)
-        Text(subtitle, color = titleColor.copy(alpha = 0.86f), fontSize = 9.sp, maxLines = 1)
+        Spacer(Modifier.height(4.dp))
+        Text(title, color = titleColor, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+        Text(subtitle, color = titleColor.copy(alpha = 0.86f), fontSize = 10.sp, maxLines = 1)
         if (actionText.isNotBlank()) {
             Spacer(Modifier.height(4.dp))
             Text(
