@@ -758,15 +758,11 @@ private fun MainPracticeCard(
             .padding(top = 11.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(
-            modifier = Modifier
-                .size(42.dp)
-                .clip(CircleShape)
-                .background(Color.White.copy(alpha = 0.45f)),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(icon, null, tint = titleColor, modifier = Modifier.size(29.dp))
-        }
+        ThreeDimensionalPracticeIcon(
+            icon = icon,
+            tint = titleColor,
+            baseColor = colors.first()
+        )
         Spacer(Modifier.height(4.dp))
         Text(title, color = titleColor, fontSize = 16.sp, fontWeight = FontWeight.Bold)
         Text(subtitle, color = titleColor.copy(alpha = 0.86f), fontSize = 10.sp, maxLines = 1)
@@ -783,6 +779,63 @@ private fun MainPracticeCard(
                     .padding(horizontal = 8.dp, vertical = 2.dp)
             )
         }
+    }
+}
+
+@Composable
+private fun ThreeDimensionalPracticeIcon(
+    icon: ImageVector,
+    tint: Color,
+    baseColor: Color
+) {
+    Box(
+        modifier = Modifier.size(52.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .offset(y = 2.dp)
+                .width(34.dp)
+                .height(9.dp)
+                .clip(CircleShape)
+                .background(baseColor.copy(alpha = 0.22f))
+        )
+        Box(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .offset(y = 4.dp)
+                .size(42.dp)
+                .clip(CircleShape)
+                .background(baseColor.copy(alpha = 0.22f))
+        )
+        Box(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .offset(y = (-1).dp)
+                .size(44.dp)
+                .clip(CircleShape)
+                .background(
+                    Brush.linearGradient(
+                        listOf(
+                            Color.White.copy(alpha = 0.98f),
+                            baseColor.copy(alpha = 0.34f),
+                            baseColor.copy(alpha = 0.72f)
+                        )
+                    )
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(icon, null, tint = tint, modifier = Modifier.size(29.dp))
+        }
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .offset(x = 12.dp, y = 8.dp)
+                .size(11.dp)
+                .clip(CircleShape)
+                .background(Color.White.copy(alpha = 0.82f))
+        )
     }
 }
 
