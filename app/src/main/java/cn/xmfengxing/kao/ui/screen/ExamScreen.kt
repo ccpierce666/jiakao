@@ -543,8 +543,7 @@ private fun SubjectTabs(
             "科一" to ExamSubject.SubjectOne,
             "科二" to null,
             "科三" to null,
-            "科四" to ExamSubject.SubjectFour,
-            "新司机" to null
+            "科四" to ExamSubject.SubjectFour
         ).forEach { (label, subject) ->
             val selected = subject == selectedSubject
             Column(
