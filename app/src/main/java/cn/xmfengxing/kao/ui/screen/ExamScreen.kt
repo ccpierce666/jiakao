@@ -1,5 +1,11 @@
 package cn.xmfengxing.kao.ui.screen
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -821,6 +827,44 @@ private fun ThreeDimensionalPracticeIcon(
     tint: Color,
     baseColor: Color
 ) {
+    val transition = rememberInfiniteTransition(label = "practice_3d_icon_motion")
+    val floatingOffset by transition.animateFloat(
+        initialValue = 0f,
+        targetValue = -3f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1400, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "floating_offset"
+    )
+    val shadowWidth by transition.animateFloat(
+        initialValue = 34f,
+        targetValue = 40f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1400, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "shadow_width"
+    )
+    val shadowAlpha by transition.animateFloat(
+        initialValue = 0.22f,
+        targetValue = 0.12f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1400, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "shadow_alpha"
+    )
+    val highlightAlpha by transition.animateFloat(
+        initialValue = 0.62f,
+        targetValue = 0.92f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1400, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "highlight_alpha"
+    )
+
     Box(
         modifier = Modifier.size(52.dp),
         contentAlignment = Alignment.Center
@@ -829,23 +873,23 @@ private fun ThreeDimensionalPracticeIcon(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .offset(y = 2.dp)
-                .width(34.dp)
+                .width(shadowWidth.dp)
                 .height(9.dp)
                 .clip(CircleShape)
-                .background(baseColor.copy(alpha = 0.22f))
+                .background(baseColor.copy(alpha = shadowAlpha))
         )
         Box(
             modifier = Modifier
                 .align(Alignment.Center)
-                .offset(y = 4.dp)
+                .offset(y = (4f + floatingOffset * 0.45f).dp)
                 .size(42.dp)
                 .clip(CircleShape)
-                .background(baseColor.copy(alpha = 0.22f))
+                .background(baseColor.copy(alpha = 0.16f + shadowAlpha * 0.25f))
         )
         Box(
             modifier = Modifier
                 .align(Alignment.Center)
-                .offset(y = (-1).dp)
+                .offset(y = (-1f + floatingOffset).dp)
                 .size(44.dp)
                 .clip(CircleShape)
                 .background(
@@ -864,10 +908,10 @@ private fun ThreeDimensionalPracticeIcon(
         Box(
             modifier = Modifier
                 .align(Alignment.TopStart)
-                .offset(x = 12.dp, y = 8.dp)
+                .offset(x = 12.dp, y = (8f + floatingOffset).dp)
                 .size(11.dp)
                 .clip(CircleShape)
-                .background(Color.White.copy(alpha = 0.82f))
+                .background(Color.White.copy(alpha = highlightAlpha))
         )
     }
 }
