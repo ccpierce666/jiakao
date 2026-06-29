@@ -42,6 +42,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import cn.xmfengxing.kao.R
 import cn.xmfengxing.kao.data.ExamSubject
+import cn.xmfengxing.kao.ui.screen.CityQuestionBankScreen
 import cn.xmfengxing.kao.ui.screen.ExamScreen
 import cn.xmfengxing.kao.ui.screen.MockExamMode
 import cn.xmfengxing.kao.ui.screen.MockExamScreen
@@ -74,6 +75,7 @@ private const val WrongFavoriteRoute = "wrong_favorite/{subject}"
 private const val QuestionSearchRoute = "question_search/{subject}"
 private const val SearchQuestionPracticeRoute =
     "search_question_practice/{subject}/{questionId}"
+private const val CityQuestionBankRoute = "city_question_bank"
 
 private fun sequencePracticeRoute(subject: ExamSubject): String =
     "sequence_practice/${subject.routeValue}"
@@ -160,6 +162,7 @@ fun AppNavigation() {
         WrongFavoriteRoute,
         QuestionSearchRoute,
         SearchQuestionPracticeRoute,
+        CityQuestionBankRoute,
         VipPurchaseRoute
     )
 
@@ -242,10 +245,16 @@ fun AppNavigation() {
                         navController.navigate(
                             questionPracticeRoute(subject, PracticeQuestionMode.Featured)
                         )
+                    },
+                    onCityQuestionBankClick = {
+                        navController.navigate(CityQuestionBankRoute)
                     }
                 )
             }
             composable(MainTab.Profile.route) { ProfileScreen(innerPadding) }
+            composable(CityQuestionBankRoute) {
+                CityQuestionBankScreen(onBack = navController::navigateUp)
+            }
             composable(QuestionSearchRoute) { backStackEntry ->
                 val subject = ExamSubject.fromRoute(
                     backStackEntry.arguments?.getString("subject")

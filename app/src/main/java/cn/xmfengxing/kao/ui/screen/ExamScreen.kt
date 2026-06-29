@@ -84,6 +84,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import cn.xmfengxing.kao.R
+import cn.xmfengxing.kao.data.CityQuestionBankStore
 import cn.xmfengxing.kao.data.ExamSubject
 import cn.xmfengxing.kao.data.PracticeProgressRepository
 import cn.xmfengxing.kao.data.PracticeStatistics
@@ -119,7 +120,8 @@ fun ExamScreen(
     onSkillTipsClick: (ExamSubject) -> Unit = {},
     onSpecializedPracticeClick: (ExamSubject) -> Unit = {},
     onWrongFavoriteClick: (ExamSubject) -> Unit = {},
-    onFeaturedQuestionsClick: (ExamSubject) -> Unit = {}
+    onFeaturedQuestionsClick: (ExamSubject) -> Unit = {},
+    onCityQuestionBankClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -130,6 +132,11 @@ fun ExamScreen(
         it.name == selectedSubjectName
     } ?: ExamSubject.SubjectOne
     val questionRepository = remember(context) { QuestionBankRepository(context) }
+    val cityStore = remember(context) { CityQuestionBankStore(context) }
+    var selectedCityId by remember { mutableStateOf(cityStore.getSelectedCityId()) }
+    val selectedCity = remember(selectedCityId) {
+        cityStore.getSelectedCity()
+    }
     val progressRepository = remember(context, selectedSubject) {
         PracticeProgressRepository(context, selectedSubject)
     }
@@ -151,7 +158,7 @@ fun ExamScreen(
             progressRepository.getStatistics(questionIds)
         }
 
-    LaunchedEffect(questionRepository, progressRepository, selectedSubject) {
+    LaunchedEffect(questionRepository, progressRepository, selectedSubject, selectedCityId) {
         practiceStatistics = PracticeStatistics(0, 0, 0, 0, 0)
         runCatching { loadPracticeStatistics() }
             .onSuccess { practiceStatistics = it }
@@ -160,6 +167,7 @@ fun ExamScreen(
     DisposableEffect(lifecycleOwner, selectedSubject) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
+                selectedCityId = cityStore.getSelectedCityId()
                 scope.launch {
                     runCatching { loadPracticeStatistics() }
                         .onSuccess { practiceStatistics = it }
@@ -180,8 +188,10 @@ fun ExamScreen(
         item {
             HeroHeader(
                 selectedVehicle = selectedVehicle,
+                selectedCityName = selectedCity.name,
                 onVehicleClick = { showVehicleSelector = true },
-                onSearchClick = { onSearchClick(selectedSubject) }
+                onSearchClick = { onSearchClick(selectedSubject) },
+                onCityClick = onCityQuestionBankClick
             )
         }
         item {
@@ -237,8 +247,10 @@ fun ExamScreen(
 @Composable
 private fun HeroHeader(
     selectedVehicle: VehicleType,
+    selectedCityName: String,
     onVehicleClick: () -> Unit,
-    onSearchClick: () -> Unit
+    onSearchClick: () -> Unit,
+    onCityClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -302,6 +314,28 @@ private fun HeroHeader(
                         fontSize = 13.sp,
                         modifier = Modifier.weight(1f)
                     )
+                }
+
+                Spacer(Modifier.width(8.dp))
+                Row(
+                    modifier = Modifier
+                        .height(38.dp)
+                        .widthIn(min = 54.dp, max = 72.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(Color.White.copy(alpha = 0.78f))
+                        .clickable(onClick = onCityClick)
+                        .padding(horizontal = 9.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = selectedCityName,
+                        color = Color(0xFF18536B),
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Text("▾", color = Color(0xFF18536B), fontSize = 12.sp)
                 }
             }
 

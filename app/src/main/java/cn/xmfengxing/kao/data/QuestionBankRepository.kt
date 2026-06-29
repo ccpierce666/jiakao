@@ -79,6 +79,7 @@ data class SpecializedPracticeItem(
 
 class QuestionBankRepository(context: Context) {
     private val appContext = context.applicationContext
+    private val cityStore = CityQuestionBankStore(appContext)
 
     fun searchQuestions(
         subject: ExamSubject,
@@ -90,6 +91,8 @@ class QuestionBankRepository(context: Context) {
 
         val likeValue = "%$query%"
         return openDatabase().use { database ->
+            val cityIds = questionCityIds(database, subject)
+            val cityPlaceholders = cityIds.joinToString(",") { "?" }
             database.rawQuery(
                 """
                 SELECT DISTINCT
@@ -120,7 +123,7 @@ class QuestionBankRepository(context: Context) {
                   ON question.ID = city_question.question_id
                 WHERE city_question.gs = 'xc'
                   AND city_question.kemu = ?
-                  AND city_question.city_id = 0
+                  AND city_question.city_id IN ($cityPlaceholders)
                   AND question.gs <> 'test'
                   AND (
                         question.Question LIKE ?
@@ -151,6 +154,7 @@ class QuestionBankRepository(context: Context) {
                 """.trimIndent(),
                 arrayOf(
                     subject.kemu.toString(),
+                    *cityIds.map(Int::toString).toTypedArray(),
                     likeValue,
                     likeValue,
                     likeValue,
@@ -182,18 +186,23 @@ class QuestionBankRepository(context: Context) {
 
     fun loadSmallCarQuestionIds(subject: ExamSubject): List<Long> {
         return openDatabase().use { database ->
+            val cityIds = questionCityIds(database, subject)
+            val cityPlaceholders = cityIds.joinToString(",") { "?" }
             database.rawQuery(
                 """
-                SELECT question.ID
+                SELECT DISTINCT question.ID
                 FROM t_city_question mapping
                 JOIN web_note question ON question.ID = mapping.question_id
                 WHERE mapping.gs = 'xc'
                   AND mapping.kemu = ?
-                  AND mapping.city_id = 0
+                  AND mapping.city_id IN ($cityPlaceholders)
                   AND question.gs <> 'test'
                 ORDER BY question.ID
                 """.trimIndent(),
-                arrayOf(subject.kemu.toString())
+                arrayOf(
+                    subject.kemu.toString(),
+                    *cityIds.map(Int::toString).toTypedArray()
+                )
             ).use { cursor ->
                 buildList {
                     while (cursor.moveToNext()) {
@@ -206,6 +215,8 @@ class QuestionBankRepository(context: Context) {
 
     fun loadFeaturedQuestionIds(subject: ExamSubject): List<Long> {
         return openDatabase().use { database ->
+            val cityIds = questionCityIds(database, subject)
+            val cityPlaceholders = cityIds.joinToString(",") { "?" }
             database.rawQuery(
                 """
                 SELECT DISTINCT category.question_id
@@ -214,14 +225,18 @@ class QuestionBankRepository(context: Context) {
                   ON city_question.question_id = category.question_id
                  AND city_question.gs = 'xc'
                  AND city_question.kemu = ?
-                 AND city_question.city_id = 0
+                 AND city_question.city_id IN ($cityPlaceholders)
                 WHERE category.gs = 'xc'
                   AND category.kemu = ?
                   AND category.city_id = 0
                   AND category.category = 5
                 ORDER BY category.sort_order, category.question_id
                 """.trimIndent(),
-                arrayOf(subject.kemu.toString(), subject.kemu.toString())
+                arrayOf(
+                    subject.kemu.toString(),
+                    *cityIds.map(Int::toString).toTypedArray(),
+                    subject.kemu.toString()
+                )
             ).use { cursor ->
                 buildList {
                     while (cursor.moveToNext()) add(cursor.getLong(0))
@@ -262,18 +277,23 @@ class QuestionBankRepository(context: Context) {
 
     fun createMockExamQuestionIds(subject: ExamSubject, rule: MockExamRule): List<Long> {
         return openDatabase().use { database ->
+            val cityIds = questionCityIds(database, subject)
+            val cityPlaceholders = cityIds.joinToString(",") { "?" }
             val idsByType = mutableMapOf<Int, MutableList<Long>>()
             database.rawQuery(
                 """
-                SELECT question.ID, question.Type
+                SELECT DISTINCT question.ID, question.Type
                 FROM t_city_question mapping
                 JOIN web_note question ON question.ID = mapping.question_id
                 WHERE mapping.gs = 'xc'
                   AND mapping.kemu = ?
-                  AND mapping.city_id = 0
+                  AND mapping.city_id IN ($cityPlaceholders)
                   AND question.gs <> 'test'
                 """.trimIndent(),
-                arrayOf(subject.kemu.toString())
+                arrayOf(
+                    subject.kemu.toString(),
+                    *cityIds.map(Int::toString).toTypedArray()
+                )
             ).use { cursor ->
                 while (cursor.moveToNext()) {
                     idsByType.getOrPut(cursor.getInt(1)) { mutableListOf() }
@@ -609,6 +629,36 @@ class QuestionBankRepository(context: Context) {
                     while (cursor.moveToNext()) add(cursor.getLong(0))
                 }
             }
+        }
+    }
+
+    private fun questionCityIds(
+        database: SQLiteDatabase,
+        subject: ExamSubject
+    ): List<Int> {
+        val selectedCityId = cityStore.getSelectedCityId()
+        if (selectedCityId == CityQuestionBanks.National.id) {
+            return listOf(CityQuestionBanks.National.id)
+        }
+
+        val hasSelectedCityQuestions = database.rawQuery(
+            """
+            SELECT 1
+            FROM t_city_question
+            WHERE gs = 'xc'
+              AND kemu = ?
+              AND city_id = ?
+            LIMIT 1
+            """.trimIndent(),
+            arrayOf(subject.kemu.toString(), selectedCityId.toString())
+        ).use { cursor ->
+            cursor.moveToFirst()
+        }
+
+        return if (hasSelectedCityQuestions) {
+            listOf(CityQuestionBanks.National.id, selectedCityId)
+        } else {
+            listOf(CityQuestionBanks.National.id)
         }
     }
 
